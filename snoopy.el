@@ -24,7 +24,7 @@
 ;;; Commentary:
 
 ;;; The currently released version of snoopy-mode is available at
-;;;   <TODO>.
+;;;   <https://raw.githubusercontent.com/anmonteiro/snoopy-mode/v0.1.0/snoopy.el>
 ;;;
 ;;; The Git repository for snoopy-mode is available at
 ;;;   <https://github.com/anmonteiro/snoopy-mode>
