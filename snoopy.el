@@ -20,6 +20,8 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with snoopy-mode.  If not, see <http://www.gnu.org/licenses/>.
 
+;;; Commentary:
+
 ;;; The currently released version of snoopy-mode is available at
 ;;;   <TODO>.
 ;;;
