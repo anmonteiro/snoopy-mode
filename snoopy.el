@@ -3,7 +3,7 @@
 ;; Copyright (C) 2017 António Nuno Monteiro, Russell McQueeney
 
 ;; Author: António Nuno Monteiro <anmonteiro@gmail.com>
-;; Version: 1
+;; Version: 0.1.0
 ;; Created: 2017-07-29
 ;; Keywords: lisp
 
