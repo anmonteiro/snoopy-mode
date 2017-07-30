@@ -17,6 +17,15 @@ You can install Snoopy Mode from [MELPA](http://melpa.org/).
 
 Inside Emacs, `M-x snoopy-mode RET` will enable Snoopy Mode.
 
+If you want to enable `snoopy-mode`, e.g. in `prog-mode`, place the following
+lines in your Emacs config:
+
+```emacs-lisp
+(require 'snoopy)
+
+(add-hook 'prog-mode-hook 'snoopy-mode)
+```
+
 ## Inspiration
 
 * [This](https://stackoverflow.com/questions/6277813/unshifted-symbols-in-emacs)
