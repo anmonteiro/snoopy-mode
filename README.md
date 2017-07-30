@@ -1,4 +1,6 @@
 # Snoopy Mode
+[![MELPA](http://melpa.org/packages/snoopy-badge.svg)](http://melpa.org/#/snoopy)
+[![MELPA Stable](http://melpa-stable.milkbox.net/packages/snoopy-badge.svg)](http://stable.melpa.org/#/snoopy)
 
 Snoopy Mode is a minor mode for number row unshifted character insertion in
 Emacs.
@@ -7,7 +9,9 @@ It can insert characters such as `!` and `@` without pressing the shift key.
 
 ## Getting Started
 
-Not deployed to (M)Elpa yet.
+You can install Snoopy Mode from [MELPA](http://melpa.org/).
+
+<kbd>M-x package-install [RET] snoopy [RET]</kbd>
 
 ## Usage
 

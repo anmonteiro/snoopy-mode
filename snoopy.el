@@ -1,4 +1,4 @@
-;;; snoopy.el --- minor mode for editing parentheses  -*- Mode: Emacs-Lisp; lexical-binding: t -*-
+;;; snoopy.el --- minor mode for number row unshifted character insertion -*- Mode: Emacs-Lisp; lexical-binding: t -*-
 
 ;; Copyright (C) 2017 António Nuno Monteiro, Russell McQueeney
 
