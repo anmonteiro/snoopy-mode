@@ -69,24 +69,6 @@
     (interactive)
     (insert-char char 1)))
 
-(defun snoopy-insert-special (_prompt)
-  "Insert a special character.
-
-This function is called for opening and
-closing parentheses, `9' and `0', to make interaction with other minor
-modes such as Paredit work."
-  (let* ((cmd-ks (this-command-keys-vector))
-         (len (length cmd-ks)))
-    (if (and (= len 1)
-             (bound-and-true-p snoopy-mode))
-        (let ((k (aref cmd-ks 0)))
-          (pcase k
-            (?9 (kbd "("))
-            (?0 (kbd ")"))
-            (?\( (kbd "9"))
-            (?\) (kbd "0"))))
-      (vector (aref cmd-ks (1- len))))))
-
 (defvar snoopy-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "1") (snoopy-insert-char ?!))
@@ -121,6 +103,24 @@ With a prefix argument, enable Snoopy Mode.
 \\<snoopy-mode-map>"
   :lighter snoopy-lighter
   :keymap snoopy-mode-map)
+
+(defun snoopy-insert-special (_prompt)
+  "Insert a special character.
+
+This function is called for opening and
+closing parentheses, `9' and `0', to make interaction with other minor
+modes such as Paredit work."
+  (let* ((cmd-ks (this-command-keys-vector))
+         (len (length cmd-ks)))
+    (if (and (= len 1)
+             snoopy-mode)
+        (let ((k (aref cmd-ks 0)))
+          (pcase k
+            (?9 (kbd "("))
+            (?0 (kbd ")"))
+            (?\( (kbd "9"))
+            (?\) (kbd "0"))))
+      (vector (aref cmd-ks (1- len))))))
 
 (provide 'snoopy)
 
