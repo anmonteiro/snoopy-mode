@@ -24,7 +24,7 @@
 ;;; Commentary:
 
 ;;; The currently released version of snoopy-mode is available at
-;;;   <https://raw.githubusercontent.com/anmonteiro/snoopy-mode/v0.1.0/snoopy.el>
+;;;   <https://raw.githubusercontent.com/anmonteiro/snoopy-mode/v0.1.1/snoopy.el>
 ;;;
 ;;; The latest version of snoopy-mode is available at
 ;;;   <https://raw.githubusercontent.com/anmonteiro/snoopy-mode/master/snoopy.el>
@@ -66,6 +66,11 @@
 
 ;;; Code:
 
+(defcustom snoopy-enabled-in-prefix-arg nil
+  "When non-nil, enable Snoopy Mode in prefix arguments."
+  :group 'snoopy
+  :type 'boolean)
+
 (defun snoopy-insert-char (char)
   "Generate a function that will insert CHAR."
   (lambda ()
@@ -82,8 +87,8 @@
     (define-key map (kbd "6") (snoopy-insert-char ?^))
     (define-key map (kbd "7") (snoopy-insert-char ?&))
     (define-key map (kbd "8") (snoopy-insert-char ?*))
-    (define-key key-translation-map (kbd "9") 'snoopy-insert-special)
-    (define-key key-translation-map (kbd "0") 'snoopy-insert-special)
+    (define-key input-decode-map (kbd "9") 'snoopy-insert-special)
+    (define-key input-decode-map (kbd "0") 'snoopy-insert-special)
     (define-key map (kbd "!") (snoopy-insert-char ?1))
     (define-key map (kbd "@") (snoopy-insert-char ?2))
     (define-key map (kbd "#") (snoopy-insert-char ?3))
@@ -92,8 +97,8 @@
     (define-key map (kbd "^") (snoopy-insert-char ?6))
     (define-key map (kbd "&") (snoopy-insert-char ?7))
     (define-key map (kbd "*") (snoopy-insert-char ?8))
-    (define-key key-translation-map (kbd "(") 'snoopy-insert-special)
-    (define-key key-translation-map (kbd ")") 'snoopy-insert-special)
+    (define-key input-decode-map (kbd "(") 'snoopy-insert-special)
+    (define-key input-decode-map (kbd ")") 'snoopy-insert-special)
     (define-key map (kbd "<kp-1>") (snoopy-insert-char ?1))
     (define-key map (kbd "<kp-2>") (snoopy-insert-char ?2))
     (define-key map (kbd "<kp-3>") (snoopy-insert-char ?3))
@@ -115,6 +120,7 @@
 With a prefix argument, enable Snoopy Mode.
 \\<snoopy-mode-map>"
   :lighter snoopy-lighter
+  :group 'snoopy
   :keymap snoopy-mode-map)
 
 (defun snoopy-insert-special (_prompt)
@@ -126,13 +132,14 @@ modes such as Paredit work."
   (let* ((cmd-ks (this-command-keys-vector))
          (len (length cmd-ks)))
     (if (and (= len 1)
-             snoopy-mode)
-        (let ((k (aref cmd-ks 0)))
-          (pcase k
-            (?9 (kbd "("))
-            (?0 (kbd ")"))
-            (?\( (kbd "9"))
-            (?\) (kbd "0"))))
+             snoopy-mode
+             (or (null prefix-arg)
+                 snoopy-enabled-in-prefix-arg))
+        (pcase (aref cmd-ks 0)
+          (?9 (kbd "("))
+          (?0 (kbd ")"))
+          (?\( (kbd "9"))
+          (?\) (kbd "0")))
       (vector (aref cmd-ks (1- len))))))
 
 (provide 'snoopy)
