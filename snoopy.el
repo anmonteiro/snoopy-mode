@@ -77,6 +77,11 @@
     (interactive)
     (insert-char char 1)))
 
+(defvar snoopy-qwerty-keyboard-definition
+  "Keyboard mapping for qwerty"
+  '(("1" . "!")("2" . "@")("3" . "#")("4" . "$")("5" . "%")
+    ("6" . "^")("7" . "&")("8" . "*")("9" . "(")("0" . ")")))
+
 (defvar snoopy-mode-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "1") (snoopy-insert-char ?!))
