@@ -105,10 +105,12 @@
 
 (defun snoopy-make-mode-map (keyboard-digit-layout)
   "Make a mode-map based on KEYBOARD-DIGIT-LAYOUT."
-  (let ((map (make-sparse-keymap))
+  (let* ((map (make-sparse-keymap))
         (open-digit (car (rassoc "(" keyboard-digit-layout)))
-        (closed-digit (car (rassoc ")" keyboard-digit-layout))))
-    (message "open%s closed%s" open-digit closed-digit)
+        (closed-digit (car (rassoc ")" keyboard-digit-layout)))
+        (open-digit-char (string-to-char open-digit))
+        (closed-digit-char (string-to-char closed-digit)))
+
     (defun snoopy-insert-special (_prompt)
       "Insert a special character.
 
@@ -122,9 +124,8 @@ modes such as Paredit work."
                  (or (null prefix-arg)
                      snoopy-enabled-in-prefix-arg))
             (pcase (aref cmd-ks 0)
-              ((pred (lambda(s) (equal s (string-to-char open-digit)))) (kbd "("))
-              ((pred (lambda(s) (equal s (string-to-char closed-digit)))) (kbd ")"))
-              ;; §note: maybe to optimise check at "define"-time
+              ((pred (lambda(s) (equal s open-digit-char))) (kbd "("))
+              ((pred (lambda(s) (equal s closed-digit-char))) (kbd ")"))
               (?\( (kbd open-digit))
               (?\) (kbd closed-digit)))
           (vector (aref cmd-ks (1- len))))))
