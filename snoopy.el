@@ -122,18 +122,17 @@ modes such as Paredit work."
                  (or (null prefix-arg)
                      snoopy-enabled-in-prefix-arg))
             (pcase (aref cmd-ks 0)
-              ((string-to-char open-digit) (kbd "("))
-              ((string-to-char closed-digit) (kbd ")"))
+              (`(string-to-char open-digit) (kbd "("))
+              (`(string-to-char closed-digit) (kbd ")"))
               (?\( (kbd open-digit))
               (?\) (kbd closed-digit)))
           (vector (aref cmd-ks (1- len))))))
 
     (defun snoopy-define-number-to-char (pair)
-      (message "%s" pair)
       (let ((number (car pair))
             (char (cdr pair)))
         (if (and (equal char ")") (equal char "("))
-            (define-key input-decode-map (kbd number) 'snoopy-insert-special) ; §FIXME custom logic
+            (define-key input-decode-map (kbd number) 'snoopy-insert-special)
             (define-key map (kbd number)
               (snoopy-insert-char (string-to-char char))))))
 
