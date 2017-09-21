@@ -83,7 +83,29 @@
   "Keyboard mapping for qwerty")
 
 (defvar snoopy-mode-map
-  (let ((map (make-sparse-keymap)))
+  (let ((map (make-sparse-keymap))
+        (open-digit (rassoc "(" snoopy-qwerty-keyboard-definition))
+        (closed-digit (rassoc ")" snoopy-qwerty-keyboard-definition)))
+
+    (defun snoopy-insert-special (_prompt)
+      "Insert a special character.
+
+This function is called for opening and
+closing parentheses, `9' and `0', to make interaction with other minor
+modes such as Paredit work."
+      (let* ((cmd-ks (this-command-keys-vector))
+             (len (length cmd-ks)))
+        (if (and (= len 1)
+                 snoopy-mode
+                 (or (null prefix-arg)
+                     snoopy-enabled-in-prefix-arg))
+            (pcase (aref cmd-ks 0)
+              ((string-to-char open-digit) (kbd "("))
+              ((string-to-char closed-digit) (kbd ")"))
+              (?\( (kbd open-digit))
+              (?\) (kbd closed-digit)))
+          (vector (aref cmd-ks (1- len))))))
+
     (defun snoopy-define-number-to-char (pair)
       (message "%s" pair)
       (let ((number (car pair))
@@ -127,25 +149,6 @@ With a prefix argument, enable Snoopy Mode.
   :lighter snoopy-lighter
   :group 'snoopy
   :keymap snoopy-mode-map)
-
-(defun snoopy-insert-special (_prompt)
-  "Insert a special character.
-
-This function is called for opening and
-closing parentheses, `9' and `0', to make interaction with other minor
-modes such as Paredit work."
-  (let* ((cmd-ks (this-command-keys-vector))
-         (len (length cmd-ks)))
-    (if (and (= len 1)
-             snoopy-mode
-             (or (null prefix-arg)
-                 snoopy-enabled-in-prefix-arg))
-        (pcase (aref cmd-ks 0)
-          (?9 (kbd "("))
-          (?0 (kbd ")"))
-          (?\( (kbd "9"))
-          (?\) (kbd "0")))
-      (vector (aref cmd-ks (1- len))))))
 
 (provide 'snoopy)
 
