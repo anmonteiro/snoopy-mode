@@ -86,6 +86,17 @@
     ("6" . "§")("7" . "è")("8" . "!") ("9" . "ç")("0" . "à"))
   "Keyboard mapping for qwerty")
 
+(defcustom snoopy-current-layout
+  'snoopy-qwerty-keyboard-digit-layout
+  "Snoopy current-layout"
+  :group 'snoopy
+  :type 'symbol
+  :set (lambda (symb val)
+         (set-default symb val)
+         (when (boundp 'snoopy-mode-map)
+           (setq snoopy-mode-map (snoopy-make-mode-map (symbol-value val)))
+           (setcdr (assoc 'snoopy-mode minor-mode-map-alist) snoopy-mode-map))))
+
 (defun snoopy-insert-char (char)
   "Generate a function that will insert CHAR."
   (lambda ()
@@ -149,23 +160,6 @@ modes such as Paredit work."
     (define-key map (kbd "<kp-0>") (snoopy-insert-char ?0))
     map))
 
-(defcustom snoopy-current-layout
-  'snoopy-qwerty-keyboard-digit-layout
-  "Snoopy current-layout"
-  :group 'snoopy
-  :type 'symbol
-  :set (lambda (symb val)
-         (set-default symb val)
-         (setq snoopy-mode-map (snoopy-make-mode-map (symbol-value val)))
-         (define-minor-mode snoopy-mode
-           "Minor mode for number row unshifted character insertion.
-With a prefix argument, enable Snoopy Mode.
-\\<snoopy-mode-map>"
-           :lighter snoopy-lighter
-           :group 'snoopy
-           :keymap snoopy-mode-map)
-
-         ))
 
 (defvar snoopy-mode-map (snoopy-make-mode-map (symbol-value snoopy-current-layout)))
 
