@@ -82,10 +82,11 @@
     ("6" . "^")("7" . "&")("8" . "*")("9" . "(")("0" . ")"))
   "Keyboard mapping for qwerty")
 
-(defvar snoopy-mode-map
+(defun snoopy-make-mode-map (keyboard-definition)
+  "Make a mode-map based on KEYBOARD-DEFINITION."
   (let ((map (make-sparse-keymap))
-        (open-digit (rassoc "(" snoopy-qwerty-keyboard-definition))
-        (closed-digit (rassoc ")" snoopy-qwerty-keyboard-definition)))
+        (open-digit (rassoc "(" keyboard-definition))
+        (closed-digit (rassoc ")" keyboard-definition)))
 
     (defun snoopy-insert-special (_prompt)
       "Insert a special character.
@@ -123,8 +124,8 @@ modes such as Paredit work."
           (define-key map (kbd char)
             (snoopy-insert-char (string-to-char number))))))
 
-    (mapcar 'snoopy-define-number-to-char snoopy-qwerty-keyboard-definition)
-    (mapcar 'snoopy-define-char-to-number snoopy-qwerty-keyboard-definition)
+    (mapcar 'snoopy-define-number-to-char keyboard-definition)
+    (mapcar 'snoopy-define-char-to-number keyboard-definition)
 
     (define-key map (kbd "<kp-1>") (snoopy-insert-char ?1))
     (define-key map (kbd "<kp-2>") (snoopy-insert-char ?2))
@@ -137,6 +138,8 @@ modes such as Paredit work."
     (define-key map (kbd "<kp-9>") (snoopy-insert-char ?9))
     (define-key map (kbd "<kp-0>") (snoopy-insert-char ?0))
     map))
+
+(defvar snoopy-mode-map (snoopy-make-mode-map snoopy-qwerty-keyboard-definition))
 
 (defvar snoopy-lighter " Snoopy"
   "Mode line lighter for Snoopy Mode.")
