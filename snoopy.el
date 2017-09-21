@@ -76,12 +76,6 @@
   :group 'snoopy
   :type 'string)
 
-(defun snoopy-insert-char (char)
-  "Generate a function that will insert CHAR."
-  (lambda ()
-    (interactive)
-    (insert-char char 1)))
-
 (defvar snoopy-qwerty-keyboard-definition
   '(("1" . "!")("2" . "@")("3" . "#")("4" . "$")("5" . "%")
     ("6" . "^")("7" . "&")("8" . "*")("9" . "(")("0" . ")"))
@@ -89,8 +83,14 @@
 
 (defvar snoopy-azerty-fr-osx-keyboard-definition
   '(("1" . "&")("2" . "é")("3" . "\"")("4" . "'")("5" . "(")
-    ("6" . "§")("7" . "è")("8" . "!")("9" . "ç")("0" . "à"))
+    ("6" . "§")("7" . "è")("8" . "!") ("9" . "ç")("0" . "à"))
   "Keyboard mapping for qwerty")
+
+(defun snoopy-insert-char (char)
+  "Generate a function that will insert CHAR."
+  (lambda ()
+    (interactive)
+    (insert-char char 1)))
 
 (defun snoopy-make-mode-map (keyboard-definition)
   "Make a mode-map based on KEYBOARD-DEFINITION."
