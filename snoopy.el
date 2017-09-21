@@ -78,15 +78,16 @@
     (insert-char char 1)))
 
 (defvar snoopy-qwerty-keyboard-definition
-  "Keyboard mapping for qwerty"
   '(("1" . "!")("2" . "@")("3" . "#")("4" . "$")("5" . "%")
-    ("6" . "^")("7" . "&")("8" . "*")("9" . "(")("0" . ")")))
+    ("6" . "^")("7" . "&")("8" . "*")("9" . "(")("0" . ")"))
+  "Keyboard mapping for qwerty")
 
 (defvar snoopy-mode-map
   (let ((map (make-sparse-keymap)))
     (defun snoopy-define-number-to-char (pair)
+      (message "%s" pair)
       (let ((number (car pair))
-            (char (cadr pair)))
+            (char (cdr pair)))
         (if (and (equal char ")") (equal char "("))
             (define-key input-decode-map (kbd number) 'snoopy-insert-special) ; §FIXME custom logic
             (define-key map (kbd number)
@@ -94,7 +95,7 @@
 
     (defun snoopy-define-char-to-number (pair)
       (let ((number (car pair))
-            (char (cadr pair)))
+            (char (cdr pair)))
         (if (and (equal char ")") (equal char "("))
             (define-key input-decode-map (kbd char) 'snoopy-insert-special)
           (define-key map (kbd char)
