@@ -82,6 +82,11 @@
     ("6" . "^")("7" . "&")("8" . "*")("9" . "(")("0" . ")"))
   "Keyboard mapping for qwerty")
 
+(defvar snoopy-azerty-fr-osx-keyboard-definition
+  '(("1" . "&")("2" . "é")("3" . "\"")("4" . "'")("5" . "(")
+    ("6" . "§")("7" . "è")("8" . "!")("9" . "ç")("0" . "à"))
+  "Keyboard mapping for qwerty")
+
 (defun snoopy-make-mode-map (keyboard-definition)
   "Make a mode-map based on KEYBOARD-DEFINITION."
   (let ((map (make-sparse-keymap))
@@ -140,6 +145,7 @@ modes such as Paredit work."
     map))
 
 (defvar snoopy-mode-map (snoopy-make-mode-map snoopy-qwerty-keyboard-definition))
+;; (defvar snoopy-mode-map (snoopy-make-mode-map snoopy-azerty-fr-osx-keyboard-definition)) ; WORKING!! ;)
 
 (defvar snoopy-lighter " Snoopy"
   "Mode line lighter for Snoopy Mode.")
