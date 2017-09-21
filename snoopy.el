@@ -71,6 +71,11 @@
   :group 'snoopy
   :type 'boolean)
 
+(defcustom snoopy-lighter " Snoopy"
+  "Mode line lighter for Snoopy Mode."
+  :group 'snoopy
+  :type 'string)
+
 (defun snoopy-insert-char (char)
   "Generate a function that will insert CHAR."
   (lambda ()
@@ -147,8 +152,6 @@ modes such as Paredit work."
 (defvar snoopy-mode-map (snoopy-make-mode-map snoopy-qwerty-keyboard-definition))
 ;; (defvar snoopy-mode-map (snoopy-make-mode-map snoopy-azerty-fr-osx-keyboard-definition)) ; WORKING!! ;)
 
-(defvar snoopy-lighter " Snoopy"
-  "Mode line lighter for Snoopy Mode.")
 
 ;;;###autoload
 (define-minor-mode snoopy-mode
