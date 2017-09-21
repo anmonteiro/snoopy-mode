@@ -76,12 +76,12 @@
   :group 'snoopy
   :type 'string)
 
-(defvar snoopy-qwerty-keyboard-definition
+(defvar snoopy-qwerty-keyboard-digit-layout
   '(("1" . "!")("2" . "@")("3" . "#")("4" . "$")("5" . "%")
     ("6" . "^")("7" . "&")("8" . "*")("9" . "(")("0" . ")"))
   "Keyboard mapping for qwerty")
 
-(defvar snoopy-azerty-fr-osx-keyboard-definition
+(defvar snoopy-azerty-fr-osx-keyboard-digit-layout
   '(("1" . "&")("2" . "é")("3" . "\"")("4" . "'")("5" . "(")
     ("6" . "§")("7" . "è")("8" . "!") ("9" . "ç")("0" . "à"))
   "Keyboard mapping for qwerty")
@@ -92,11 +92,11 @@
     (interactive)
     (insert-char char 1)))
 
-(defun snoopy-make-mode-map (keyboard-definition)
-  "Make a mode-map based on KEYBOARD-DEFINITION."
+(defun snoopy-make-mode-map (keyboard-digit-layout)
+  "Make a mode-map based on KEYBOARD-DIGIT-LAYOUT."
   (let ((map (make-sparse-keymap))
-        (open-digit (rassoc "(" keyboard-definition))
-        (closed-digit (rassoc ")" keyboard-definition)))
+        (open-digit (rassoc "(" keyboard-digit-layout))
+        (closed-digit (rassoc ")" keyboard-digit-layout)))
 
     (defun snoopy-insert-special (_prompt)
       "Insert a special character.
@@ -134,8 +134,8 @@ modes such as Paredit work."
           (define-key map (kbd char)
             (snoopy-insert-char (string-to-char number))))))
 
-    (mapcar 'snoopy-define-number-to-char keyboard-definition)
-    (mapcar 'snoopy-define-char-to-number keyboard-definition)
+    (mapcar 'snoopy-define-number-to-char keyboard-digit-layout)
+    (mapcar 'snoopy-define-char-to-number keyboard-digit-layout)
 
     (define-key map (kbd "<kp-1>") (snoopy-insert-char ?1))
     (define-key map (kbd "<kp-2>") (snoopy-insert-char ?2))
@@ -149,8 +149,8 @@ modes such as Paredit work."
     (define-key map (kbd "<kp-0>") (snoopy-insert-char ?0))
     map))
 
-(defvar snoopy-mode-map (snoopy-make-mode-map snoopy-qwerty-keyboard-definition))
-;; (defvar snoopy-mode-map (snoopy-make-mode-map snoopy-azerty-fr-osx-keyboard-definition)) ; WORKING!! ;)
+(defvar snoopy-mode-map (snoopy-make-mode-map snoopy-qwerty-keyboard-digit-layout))
+;; (defvar snoopy-mode-map (snoopy-make-mode-map snoopy-azerty-fr-osx-keyboard-digit-layout)) ; WORKING!! ;)
 
 
 ;;;###autoload
