@@ -106,9 +106,9 @@
 (defun snoopy-make-mode-map (keyboard-digit-layout)
   "Make a mode-map based on KEYBOARD-DIGIT-LAYOUT."
   (let ((map (make-sparse-keymap))
-        (open-digit (rassoc "(" keyboard-digit-layout))
-        (closed-digit (rassoc ")" keyboard-digit-layout)))
-
+        (open-digit (car (rassoc "(" keyboard-digit-layout)))
+        (closed-digit (car (rassoc ")" keyboard-digit-layout))))
+    (message "open%s closed%s" open-digit closed-digit)
     (defun snoopy-insert-special (_prompt)
       "Insert a special character.
 
@@ -122,8 +122,9 @@ modes such as Paredit work."
                  (or (null prefix-arg)
                      snoopy-enabled-in-prefix-arg))
             (pcase (aref cmd-ks 0)
-              (`(string-to-char open-digit) (kbd "("))
-              (`(string-to-char closed-digit) (kbd ")"))
+              ((pred (lambda(s) (equal s (string-to-char open-digit)))) (kbd "("))
+              ((pred (lambda(s) (equal s (string-to-char closed-digit)))) (kbd ")"))
+              ;; §note: maybe to optimise check at "define"-time
               (?\( (kbd open-digit))
               (?\) (kbd closed-digit)))
           (vector (aref cmd-ks (1- len))))))
@@ -131,7 +132,7 @@ modes such as Paredit work."
     (defun snoopy-define-number-to-char (pair)
       (let ((number (car pair))
             (char (cdr pair)))
-        (if (and (equal char ")") (equal char "("))
+        (if (or (equal char ")") (equal char "("))
             (define-key input-decode-map (kbd number) 'snoopy-insert-special)
             (define-key map (kbd number)
               (snoopy-insert-char (string-to-char char))))))
@@ -139,7 +140,7 @@ modes such as Paredit work."
     (defun snoopy-define-char-to-number (pair)
       (let ((number (car pair))
             (char (cdr pair)))
-        (if (and (equal char ")") (equal char "("))
+        (if (or (equal char ")") (equal char "("))
             (define-key input-decode-map (kbd char) 'snoopy-insert-special)
           (define-key map (kbd char)
             (snoopy-insert-char (string-to-char number))))))
