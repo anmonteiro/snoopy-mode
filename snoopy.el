@@ -149,9 +149,25 @@ modes such as Paredit work."
     (define-key map (kbd "<kp-0>") (snoopy-insert-char ?0))
     map))
 
-(defvar snoopy-mode-map (snoopy-make-mode-map snoopy-qwerty-keyboard-digit-layout))
-;; (defvar snoopy-mode-map (snoopy-make-mode-map snoopy-azerty-fr-osx-keyboard-digit-layout)) ; WORKING!! ;)
+(defcustom snoopy-current-layout
+  'snoopy-qwerty-keyboard-digit-layout
+  "Snoopy current-layout"
+  :group 'snoopy
+  :type 'symbol
+  :set (lambda (symb val)
+         (set-default symb val)
+         (setq snoopy-mode-map (snoopy-make-mode-map (symbol-value val)))
+         (define-minor-mode snoopy-mode
+           "Minor mode for number row unshifted character insertion.
+With a prefix argument, enable Snoopy Mode.
+\\<snoopy-mode-map>"
+           :lighter snoopy-lighter
+           :group 'snoopy
+           :keymap snoopy-mode-map)
 
+         ))
+
+(defvar snoopy-mode-map (snoopy-make-mode-map (symbol-value snoopy-current-layout)))
 
 ;;;###autoload
 (define-minor-mode snoopy-mode
