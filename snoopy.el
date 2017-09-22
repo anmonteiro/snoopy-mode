@@ -131,8 +131,8 @@ modes such as Paredit work."
             (pcase (aref cmd-ks 0)
               ((pred (lambda(s) (equal s open-digit-char))) (kbd "("))
               ((pred (lambda(s) (equal s closed-digit-char))) (kbd ")"))
-              (?\( (kbd open-digit))
-              (?\) (kbd closed-digit)))
+              (?\( (kbd (or open-digit "(")))
+              (?\) (kbd (or closed-digit ")"))))
           (vector (aref cmd-ks (1- len))))))
 
     (defun snoopy-define-number-to-char (pair)
