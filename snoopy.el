@@ -108,8 +108,8 @@
   (let* ((map (make-sparse-keymap))
         (open-digit (car (rassoc "(" keyboard-digit-layout)))
         (closed-digit (car (rassoc ")" keyboard-digit-layout)))
-        (open-digit-char (string-to-char open-digit))
-        (closed-digit-char (string-to-char closed-digit)))
+        (open-digit-char (when open-digit (string-to-char open-digit)))
+        (closed-digit-char (when closed-digit (string-to-char closed-digit))))
 
     (defun snoopy-insert-special (_prompt)
       "Insert a special character.
