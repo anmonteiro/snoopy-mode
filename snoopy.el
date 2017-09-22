@@ -90,7 +90,12 @@
   'snoopy-qwerty-keyboard-digit-layout
   "Snoopy current-layout"
   :group 'snoopy
-  :type 'symbol
+  :type '(restricted-sexp
+          :match-alternatives
+          ((lambda (s)
+             (and (symbolp s) (boundp s)
+                  (string-prefix-p "snoopy-" (symbol-name s))
+                  (string-suffix-p "-keyboard-digit-layout" (symbol-name s))))))
   :set (lambda (symb val)
          (set-default symb val)
          (when (boundp 'snoopy-mode-map)
