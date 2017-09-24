@@ -13,6 +13,10 @@
 
 ;; Ensure that we don't load old byte-compiled versions
 (let ((load-prefer-newer t))
+  (require 'undercover)
+  (undercover "*.el"
+              (:exclude "*-test.el")
+              (:report-file "/tmp/undercover-report.json"))
   (require 'snoopy)
   (require 'espuds)
   (require 'ert))
