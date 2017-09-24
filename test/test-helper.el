@@ -35,6 +35,6 @@
 (require 'el-mock)
 (eval-when-compile
   (require 'cl))
-(require 'snoopy-mode)
+(require 'snoopy)
 
 ;;; test-helper.el ends here
