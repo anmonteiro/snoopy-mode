@@ -1,6 +1,7 @@
 # Snoopy Mode
 [![MELPA](http://melpa.org/packages/snoopy-badge.svg)](http://melpa.org/#/snoopy)
 [![MELPA Stable](http://melpa-stable.milkbox.net/packages/snoopy-badge.svg)](http://stable.melpa.org/#/snoopy)
+[![Build Status](https://travis-ci.org/anmonteiro/snoopy-mode.svg?branch=master)](https://travis-ci.org/anmonteiro/snoopy-mode)
 
 Snoopy Mode is a minor mode for number row unshifted character insertion in
 Emacs.

@@ -16,6 +16,3 @@ env:
 script:
   - emacs --version
   - make test
-
-notifications:
-  email: false
