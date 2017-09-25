@@ -4,7 +4,7 @@
 
 ;; Author: António Nuno Monteiro <anmonteiro@gmail.com>
 ;; Version: 0.1.1
-;; Package-Requires: ((emacs "24"))
+;; Package-Requires: ((emacs "24") (cl-lib "0.6"))
 ;; Created: 2017-07-29
 ;; Keywords: lisp
 
@@ -66,6 +66,8 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (defcustom snoopy-enabled-in-prefix-arg nil
   "When non-nil, enable Snoopy Mode in prefix arguments."
   :group 'snoopy
@@ -76,14 +78,10 @@
   :group 'snoopy
   :type 'string)
 
-(defvar snoopy-qwerty-keyboard-digit-layout
-  '(("1" . "!")("2" . "@")("3" . "#")("4" . "$")("5" . "%")
-    ("6" . "^")("7" . "&")("8" . "*")("9" . "(")("0" . ")"))
+(defvar snoopy-qwerty-keyboard-digit-layout "!@#$%^&*()"
   "Keyboard mapping for qwerty")
 
-(defvar snoopy-azerty-fr-osx-keyboard-digit-layout
-  '(("1" . "&")("2" . "é")("3" . "\"")("4" . "'")("5" . "(")
-    ("6" . "§")("7" . "è")("8" . "!") ("9" . "ç")("0" . "à"))
+(defvar snoopy-azerty-fr-osx-keyboard-digit-layout "&é\"'(§è!çà"
   "Keyboard mapping for qwerty")
 
 (defcustom snoopy-current-layout
@@ -108,13 +106,19 @@
     (interactive)
     (insert-char char 1)))
 
-(defun snoopy-make-mode-map (keyboard-digit-layout)
-  "Make a mode-map based on KEYBOARD-DIGIT-LAYOUT."
+(defun snoopy-make-keyboard-digit-layout-assoc (keyboard-digit-layout-string)
+  (cl-mapcar (lambda (num sym) (cons (format "%d" num) (make-string 1 sym)))
+             '(1 2 3 4 5 6 7 8 9 0)
+             keyboard-digit-layout-string))
+
+(defun snoopy-make-mode-map (keyboard-digit-layout-string)
+  "Make a mode-map based on KEYBOARD-DIGIT-LAYOUT-STRING."
   (let* ((map (make-sparse-keymap))
-        (open-digit (car (rassoc "(" keyboard-digit-layout)))
-        (closed-digit (car (rassoc ")" keyboard-digit-layout)))
-        (open-digit-char (when open-digit (string-to-char open-digit)))
-        (closed-digit-char (when closed-digit (string-to-char closed-digit))))
+         (keyboard-digit-layout (snoopy-make-keyboard-digit-layout-assoc keyboard-digit-layout-string))
+         (open-digit (car (rassoc "(" keyboard-digit-layout)))
+         (closed-digit (car (rassoc ")" keyboard-digit-layout)))
+         (open-digit-char (when open-digit (string-to-char open-digit)))
+         (closed-digit-char (when closed-digit (string-to-char closed-digit))))
 
     (defun snoopy-insert-special (_prompt)
       "Insert a special character.
