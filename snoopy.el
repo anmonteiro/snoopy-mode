@@ -91,13 +91,15 @@
   :type '(restricted-sexp
           :match-alternatives
           ((lambda (s)
-             (and (symbolp s) (boundp s)
-                  (string-prefix-p "snoopy-" (symbol-name s))
-                  (string-suffix-p "-keyboard-digit-layout" (symbol-name s))))))
+             (or
+              (and (stringp s) (eq 10 (length s)))
+              (and (symbolp s) (boundp s)
+                   (string-prefix-p "snoopy-" (symbol-name s))
+                   (string-suffix-p "-keyboard-digit-layout" (symbol-name s)))))))
   :set (lambda (symb val)
          (set-default symb val)
          (when (boundp 'snoopy-mode-map)
-           (setq snoopy-mode-map (snoopy-make-mode-map (symbol-value val)))
+           (setq snoopy-mode-map (snoopy-make-mode-map val))
            (setcdr (assoc 'snoopy-mode minor-mode-map-alist) snoopy-mode-map))))
 
 (defun snoopy-insert-char (char)
@@ -111,9 +113,12 @@
              '(1 2 3 4 5 6 7 8 9 0)
              keyboard-digit-layout-string))
 
-(defun snoopy-make-mode-map (keyboard-digit-layout-string)
-  "Make a mode-map based on KEYBOARD-DIGIT-LAYOUT-STRING."
+(defun snoopy-make-mode-map (keyboard-digit-layout-string-or-symbol)
+  "Make a mode-map based on KEYBOARD-DIGIT-LAYOUT-STRING-OR-SYMBOL."
   (let* ((map (make-sparse-keymap))
+         (keyboard-digit-layout-string (if (symbolp keyboard-digit-layout-string-or-symbol)
+                                           (symbol-value keyboard-digit-layout-string-or-symbol)
+                                         keyboard-digit-layout-string-or-symbol))
          (keyboard-digit-layout (snoopy-make-keyboard-digit-layout-assoc keyboard-digit-layout-string))
          (open-digit (car (rassoc "(" keyboard-digit-layout)))
          (closed-digit (car (rassoc ")" keyboard-digit-layout)))
