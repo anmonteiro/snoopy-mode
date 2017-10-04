@@ -105,7 +105,7 @@
          (when (boundp 'snoopy-mode-map)
            (setq snoopy-mode-map (snoopy-make-mode-map val))
            (setcdr (assoc 'snoopy-mode minor-mode-map-alist) snoopy-mode-map))))
-
+(assoc 'snoopy-mode minor-mode-map-alist)
 (defun snoopy-insert-char (char)
   "Generate a function that will insert CHAR."
   (lambda ()
@@ -179,6 +179,11 @@ modes such as Paredit work."
     (define-key map (kbd "<kp-0>") (snoopy-insert-char ?0))
     map))
 
+(defun snoopy-select-keyboard-layout ()
+  (interactive)
+  (let ((layout (ido-completing-read "Select Keyboard Layout: "
+                                     (mapcar 'symbol-name snoopy-keyboard-digit-layout-list))))
+    (customize-set-variable 'snoopy-current-layout (intern layout))))
 
 (defvar snoopy-mode-map (snoopy-make-mode-map (symbol-value snoopy-current-layout)))
 
