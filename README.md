@@ -26,6 +26,13 @@ lines in your Emacs config:
 (add-hook 'prog-mode-hook 'snoopy-mode)
 ```
 
+## Customization
+Default layout is based on the *qwerty* layout, you can change this two way:
+
+- pick an existing layout with `snoopy-select-keyboard-layout`
+
+- define your custom one with `snoopy-set-custom-keyboard-layout`
+
 ## Inspiration
 
 * [This](https://stackoverflow.com/questions/6277813/unshifted-symbols-in-emacs)
