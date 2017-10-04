@@ -185,6 +185,14 @@ modes such as Paredit work."
                                      (mapcar 'symbol-name snoopy-keyboard-digit-layout-list))))
     (customize-set-variable 'snoopy-current-layout (intern layout))))
 
+(defun snoopy-set-custom-keyboard-layout (keyboard-digit-layout-string)
+  (interactive "sHit your digit row: ")
+  (if (eq 10 (length keyboard-digit-layout-string))
+      (customize-set-variable 'snoopy-current-layout keyboard-digit-layout-string)
+    (signal 'wrong-type-argument `(keyboard-digit-layout-string "Must be a ten character string, was"
+                                                                ,keyboard-digit-layout-string))))
+
+
 (defvar snoopy-mode-map (snoopy-make-mode-map (symbol-value snoopy-current-layout)))
 
 ;;;###autoload
