@@ -78,6 +78,10 @@
   :group 'snoopy
   :type 'string)
 
+(defvar snoopy-keyboard-digit-layout-list
+  '(snoopy-qwerty-keyboard-digit-layout
+    snoopy-azerty-fr-osx-keyboard-digit-layout))
+
 (defvar snoopy-qwerty-keyboard-digit-layout "!@#$%^&*()"
   "Keyboard mapping for qwerty")
 
