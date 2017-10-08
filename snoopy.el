@@ -79,18 +79,22 @@
   :type 'string)
 
 (defvar snoopy-keyboard-digit-layout-list
-  '(snoopy-qwerty-keyboard-digit-layout
-    snoopy-azerty-fr-osx-keyboard-digit-layout))
+  '(snoopy-qwerty-en-us-keyboard-digit-layout
+    snoopy-azerty-fr-osx-keyboard-digit-layout
+    snoopy-azerty-fr-pc-keyboard-digit-layout))
 
-(defvar snoopy-qwerty-keyboard-digit-layout "!@#$%^&*()"
+(defvar snoopy-qwerty-en-us-keyboard-digit-layout "!@#$%^&*()"
   "Keyboard mapping for qwerty")
 
 (defvar snoopy-azerty-fr-osx-keyboard-digit-layout "&é\"'(§è!çà"
-  "Keyboard mapping for qwerty")
+  "Keyboard mapping for azerty (fr osx")
 
-(defcustom snoopy-current-layout
-  'snoopy-qwerty-keyboard-digit-layout
-  "Snoopy current-layout"
+(defvar snoopy-azerty-fr-pc-keyboard-digit-layout "&é\"'(-è_çà"
+  "Keyboard mapping for azerty (fr pc")
+
+(defcustom snoopy-keyboard-layout
+  'snoopy-qwerty-en-us-keyboard-digit-layout
+  "Snoopy current keyboard layout"
   :group 'snoopy
   :type '(restricted-sexp
           :match-alternatives
@@ -183,17 +187,17 @@ modes such as Paredit work."
   (interactive)
   (let ((layout (ido-completing-read "Select Keyboard Layout: "
                                      (mapcar 'symbol-name snoopy-keyboard-digit-layout-list))))
-    (customize-set-variable 'snoopy-current-layout (intern layout))))
+    (customize-set-variable 'snoopy-keyboard-layout (intern layout))))
 
 (defun snoopy-set-custom-keyboard-layout (keyboard-digit-layout-string)
   (interactive "sHit your digit row: ")
   (if (eq 10 (length keyboard-digit-layout-string))
-      (customize-set-variable 'snoopy-current-layout keyboard-digit-layout-string)
+      (customize-set-variable 'snoopy-keyboard-layout keyboard-digit-layout-string)
     (signal 'wrong-type-argument `(keyboard-digit-layout-string "Must be a ten character string, was"
                                                                 ,keyboard-digit-layout-string))))
 
 
-(defvar snoopy-mode-map (snoopy-make-mode-map (symbol-value snoopy-current-layout)))
+(defvar snoopy-mode-map (snoopy-make-mode-map (symbol-value snoopy-keyboard-layout)))
 
 ;;;###autoload
 (define-minor-mode snoopy-mode
