@@ -1,6 +1,8 @@
 # Changelog
 
-## [master](https://github.com/anmonteiro/snoopy-mode/compare/v0.1.1...HEAD) (unreleased)
+## [master](https://github.com/anmonteiro/snoopy-mode/compare/v0.2.0...HEAD) (unreleased)
+
+## [v0.2.0](https://github.com/anmonteiro/snoopy-mode/compare/v0.1.1...v0.2.0) (2017-10-08)
 
 - Add support for numeric keypads ([#2](https://github.com/anmonteiro/snoopy-mode/pull/2)).
 - Don't insert overridden keys in prefix arguments by default ([#1](https://github.com/anmonteiro/snoopy-mode/issues/1)).

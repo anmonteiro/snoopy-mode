@@ -3,7 +3,7 @@
 ;; Copyright (C) 2017 António Nuno Monteiro, Russell McQueeney
 
 ;; Author: António Nuno Monteiro <anmonteiro@gmail.com>
-;; Version: 0.1.1
+;; Version: 0.2.0
 ;; Package-Requires: ((emacs "24") (cl-lib "0.6"))
 ;; Created: 2017-07-29
 ;; Keywords: lisp
@@ -24,7 +24,7 @@
 ;;; Commentary:
 
 ;;; The currently released version of snoopy-mode is available at
-;;;   <https://raw.githubusercontent.com/anmonteiro/snoopy-mode/v0.1.1/snoopy.el>
+;;;   <https://raw.githubusercontent.com/anmonteiro/snoopy-mode/v0.2.0/snoopy.el>
 ;;;
 ;;; The latest version of snoopy-mode is available at
 ;;;   <https://raw.githubusercontent.com/anmonteiro/snoopy-mode/master/snoopy.el>
