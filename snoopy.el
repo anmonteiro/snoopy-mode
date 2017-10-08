@@ -4,7 +4,7 @@
 
 ;; Author: António Nuno Monteiro <anmonteiro@gmail.com>
 ;; Version: 0.1.1
-;; Package-Requires: ((emacs "24"))
+;; Package-Requires: ((emacs "24") (cl-lib "0.6"))
 ;; Created: 2017-07-29
 ;; Keywords: lisp
 
@@ -66,39 +66,111 @@
 
 ;;; Code:
 
+(require 'cl-lib)
+
 (defcustom snoopy-enabled-in-prefix-arg nil
   "When non-nil, enable Snoopy Mode in prefix arguments."
   :group 'snoopy
   :type 'boolean)
 
+(defcustom snoopy-lighter " Snoopy"
+  "Mode line lighter for Snoopy Mode."
+  :group 'snoopy
+  :type 'string)
+
+(defvar snoopy-keyboard-digit-layout-list
+  '(snoopy-qwerty-en-us-keyboard-digit-layout
+    snoopy-azerty-fr-osx-keyboard-digit-layout
+    snoopy-azerty-fr-pc-keyboard-digit-layout))
+
+(defvar snoopy-qwerty-en-us-keyboard-digit-layout "!@#$%^&*()"
+  "Keyboard mapping for qwerty")
+
+(defvar snoopy-azerty-fr-osx-keyboard-digit-layout "&é\"'(§è!çà"
+  "Keyboard mapping for azerty (fr osx")
+
+(defvar snoopy-azerty-fr-pc-keyboard-digit-layout "&é\"'(-è_çà"
+  "Keyboard mapping for azerty (fr pc")
+
+(defcustom snoopy-keyboard-layout
+  'snoopy-qwerty-en-us-keyboard-digit-layout
+  "Snoopy current keyboard layout"
+  :group 'snoopy
+  :type '(restricted-sexp
+          :match-alternatives
+          ((lambda (s)
+             (or
+              (and (stringp s) (eq 10 (length s)))
+              (and (symbolp s) (boundp s)
+                   (string-prefix-p "snoopy-" (symbol-name s))
+                   (string-suffix-p "-keyboard-digit-layout" (symbol-name s)))))))
+  :set (lambda (symb val)
+         (set-default symb val)
+         (when (boundp 'snoopy-mode-map)
+           (setq snoopy-mode-map (snoopy-make-mode-map val))
+           (setcdr (assoc 'snoopy-mode minor-mode-map-alist) snoopy-mode-map))))
+(assoc 'snoopy-mode minor-mode-map-alist)
 (defun snoopy-insert-char (char)
   "Generate a function that will insert CHAR."
   (lambda ()
     (interactive)
     (insert-char char 1)))
 
-(defvar snoopy-mode-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "1") (snoopy-insert-char ?!))
-    (define-key map (kbd "2") (snoopy-insert-char ?@))
-    (define-key map (kbd "3") (snoopy-insert-char ?#))
-    (define-key map (kbd "4") (snoopy-insert-char ?$))
-    (define-key map (kbd "5") (snoopy-insert-char ?%))
-    (define-key map (kbd "6") (snoopy-insert-char ?^))
-    (define-key map (kbd "7") (snoopy-insert-char ?&))
-    (define-key map (kbd "8") (snoopy-insert-char ?*))
-    (define-key input-decode-map (kbd "9") 'snoopy-insert-special)
-    (define-key input-decode-map (kbd "0") 'snoopy-insert-special)
-    (define-key map (kbd "!") (snoopy-insert-char ?1))
-    (define-key map (kbd "@") (snoopy-insert-char ?2))
-    (define-key map (kbd "#") (snoopy-insert-char ?3))
-    (define-key map (kbd "$") (snoopy-insert-char ?4))
-    (define-key map (kbd "%") (snoopy-insert-char ?5))
-    (define-key map (kbd "^") (snoopy-insert-char ?6))
-    (define-key map (kbd "&") (snoopy-insert-char ?7))
-    (define-key map (kbd "*") (snoopy-insert-char ?8))
-    (define-key input-decode-map (kbd "(") 'snoopy-insert-special)
-    (define-key input-decode-map (kbd ")") 'snoopy-insert-special)
+(defun snoopy-make-keyboard-digit-layout-assoc (keyboard-digit-layout-string)
+  (cl-mapcar (lambda (num sym) (cons (format "%d" num) (make-string 1 sym)))
+             '(1 2 3 4 5 6 7 8 9 0)
+             keyboard-digit-layout-string))
+
+(defun snoopy-make-mode-map (keyboard-digit-layout-string-or-symbol)
+  "Make a mode-map based on KEYBOARD-DIGIT-LAYOUT-STRING-OR-SYMBOL."
+  (let* ((map (make-sparse-keymap))
+         (keyboard-digit-layout-string (if (symbolp keyboard-digit-layout-string-or-symbol)
+                                           (symbol-value keyboard-digit-layout-string-or-symbol)
+                                         keyboard-digit-layout-string-or-symbol))
+         (keyboard-digit-layout (snoopy-make-keyboard-digit-layout-assoc keyboard-digit-layout-string))
+         (open-digit (car (rassoc "(" keyboard-digit-layout)))
+         (closed-digit (car (rassoc ")" keyboard-digit-layout)))
+         (open-digit-char (when open-digit (string-to-char open-digit)))
+         (closed-digit-char (when closed-digit (string-to-char closed-digit))))
+
+    (defun snoopy-insert-special (_prompt)
+      "Insert a special character.
+
+This function is called for opening and
+closing parentheses, `9' and `0', to make interaction with other minor
+modes such as Paredit work."
+      (let* ((cmd-ks (this-command-keys-vector))
+             (len (length cmd-ks)))
+        (if (and (= len 1)
+                 snoopy-mode
+                 (or (null prefix-arg)
+                     snoopy-enabled-in-prefix-arg))
+            (pcase (aref cmd-ks 0)
+              ((pred (lambda(s) (equal s open-digit-char))) (kbd "("))
+              ((pred (lambda(s) (equal s closed-digit-char))) (kbd ")"))
+              (?\( (kbd (or open-digit "(")))
+              (?\) (kbd (or closed-digit ")"))))
+          (vector (aref cmd-ks (1- len))))))
+
+    (defun snoopy-define-number-to-char (pair)
+      (let ((number (car pair))
+            (char (cdr pair)))
+        (if (or (equal char ")") (equal char "("))
+            (define-key input-decode-map (kbd number) 'snoopy-insert-special)
+            (define-key map (kbd number)
+              (snoopy-insert-char (string-to-char char))))))
+
+    (defun snoopy-define-char-to-number (pair)
+      (let ((number (car pair))
+            (char (cdr pair)))
+        (if (or (equal char ")") (equal char "("))
+            (define-key input-decode-map (kbd char) 'snoopy-insert-special)
+          (define-key map (kbd char)
+            (snoopy-insert-char (string-to-char number))))))
+
+    (mapcar 'snoopy-define-number-to-char keyboard-digit-layout)
+    (mapcar 'snoopy-define-char-to-number keyboard-digit-layout)
+
     (define-key map (kbd "<kp-1>") (snoopy-insert-char ?1))
     (define-key map (kbd "<kp-2>") (snoopy-insert-char ?2))
     (define-key map (kbd "<kp-3>") (snoopy-insert-char ?3))
@@ -111,8 +183,21 @@
     (define-key map (kbd "<kp-0>") (snoopy-insert-char ?0))
     map))
 
-(defvar snoopy-lighter " Snoopy"
-  "Mode line lighter for Snoopy Mode.")
+(defun snoopy-select-keyboard-layout ()
+  (interactive)
+  (let ((layout (ido-completing-read "Select Keyboard Layout: "
+                                     (mapcar 'symbol-name snoopy-keyboard-digit-layout-list))))
+    (customize-set-variable 'snoopy-keyboard-layout (intern layout))))
+
+(defun snoopy-set-custom-keyboard-layout (keyboard-digit-layout-string)
+  (interactive "sHit your digit row: ")
+  (if (eq 10 (length keyboard-digit-layout-string))
+      (customize-set-variable 'snoopy-keyboard-layout keyboard-digit-layout-string)
+    (signal 'wrong-type-argument `(keyboard-digit-layout-string "Must be a ten character string, was"
+                                                                ,keyboard-digit-layout-string))))
+
+
+(defvar snoopy-mode-map (snoopy-make-mode-map (symbol-value snoopy-keyboard-layout)))
 
 ;;;###autoload
 (define-minor-mode snoopy-mode
@@ -122,25 +207,6 @@ With a prefix argument, enable Snoopy Mode.
   :lighter snoopy-lighter
   :group 'snoopy
   :keymap snoopy-mode-map)
-
-(defun snoopy-insert-special (_prompt)
-  "Insert a special character.
-
-This function is called for opening and
-closing parentheses, `9' and `0', to make interaction with other minor
-modes such as Paredit work."
-  (let* ((cmd-ks (this-command-keys-vector))
-         (len (length cmd-ks)))
-    (if (and (= len 1)
-             snoopy-mode
-             (or (null prefix-arg)
-                 snoopy-enabled-in-prefix-arg))
-        (pcase (aref cmd-ks 0)
-          (?9 (kbd "("))
-          (?0 (kbd ")"))
-          (?\( (kbd "9"))
-          (?\) (kbd "0")))
-      (vector (aref cmd-ks (1- len))))))
 
 (provide 'snoopy)
 
